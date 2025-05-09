@@ -1,4 +1,5 @@
 import random
+import TsheringChoden_02240274_A2_PB as pb
 
 # Class: Guess the Number Game
 class GuessNumberGame:
@@ -57,12 +58,12 @@ class TriviaPursuitQuiz:
     def __init__(self):
         self.questions = {
             "Science": [
-                ("What is the chemical symbol for water?", ["H2O", "O2", "CO2", "H2"], "H2O"),
-                ("What planet is known as the Red Planet?", ["Earth", "Mars", "Jupiter", "Saturn"], "Mars")
+                ("What is the center of the atom called?", ["Proton", "Neutron", "Nucleus", "Electron"], "Nucleus"),
+                ("What do we call material that do not conduct electricity?", ["Conductors", "Insulators", "Reactants", "Transmitters"], "Insulators")
             ],
             "Geography": [
-                ("Which is the largest ocean on Earth?", ["Atlantic", "Indian", "Arctic", "Pacific"], "Pacific"),
-                ("What is the capital of France?", ["Berlin", "Madrid", "Paris", "Rome"], "Paris")
+                ("What is the largest continent on Earth?", ["Africa", "Europe", "Asia", "North America"], "Asia"),
+                ("Which country is shaped like a boot?", ["Greece", "Italy", "Brazil", "India"], "Italy")
             ]
         }
 
@@ -93,48 +94,80 @@ class TriviaPursuitQuiz:
         return score
 
 # Class: Pokemon Card Binder Manager
+Pokemon_card = pb.PokemonCardBinder()
 class PokemonCardBinder:
-    def __init__(self):
-        self.binder = []
+    def __init__(self, overall_score):
+        self.overall_score = overall_score
+        self.cards = Pokemon_card
+        self.session_active = True  # Initialize session_active
 
-    def add_pokemon_card(self):
-        card_name = input("Enter the name of the Pokemon card: ")
-        card_type = input("Enter the type of the card (e.g., Fire, Water): ")
-        self.binder.append({"name": card_name, "type": card_type})
-        print(f"{card_name} card added to the binder!")
+    def add_card(self, pokedex_number):
+        # Assuming Pokemon_card has an `add_card` method
+        try:
+            self.cards.add_card(pokedex_number)
+            print(f"Pokemon card with Pokedex number {pokedex_number} added successfully.")
+        except AttributeError:
+            print("Error: Unable to add card. Ensure the PokemonCardBinder is properly initialized.")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
 
+    
     def reset_binder(self):
-        self.binder.clear()
-        print("The binder has been reset.")
+        # Assuming Pokemon_card has a `reset_binder` method
+        try:
+            self.cards.reset_binder()
+            print("Binder has been reset successfully.")
+        except AttributeError:
+            print("Error: Unable to reset binder. Ensure the PokemonCardBinder is properly initialized.")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
 
-    def view_current_placements(self):
-        if self.binder:
-            print("Current Pokemon Cards in Binder:")
-            for card in self.binder:
-                print(f"Name: {card['name']}, Type: {card['type']}")
-        else:
-            print("No cards in the binder yet.")
+    def display_menu(self):
+        print("\nMain Menu:")
+        print("1. Add Pokemon card")
+        print("2. Reset binder")
+        print("3. View current placements")
+        print("4. Exit")
 
-    def manage(self):
-        print("Welcome to the Pokemon Card Binder Manager!")
-        while True:
-            print("\nMain Menu:")
-            print("1. Add Pokemon card")
-            print("2. Reset binder")
-            print("3. View current placements")
-            print("4. Exit")
-            choice = input("Enter your choice: ")
-            if choice == '1':
-                self.add_pokemon_card()
-            elif choice == '2':
-                self.reset_binder()
-            elif choice == '3':
-                self.view_current_placements()
-            elif choice == '4':
-                print("Exiting Pokemon Card Binder Manager.")
-                break
-            else:
-                print("Invalid choice. Please try again.")
+    def view_placements(self):
+        # Assuming Pokemon_card has a `view_placements` method
+        try:
+            placements = self.cards.view_placements()
+            print("Current Placements:")
+            for placement in placements:
+                print(placement)
+        except AttributeError:
+            print("Error: Unable to view placements. Ensure the PokemonCardBinder is properly initialized.")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+
+    def exit_manager(self):
+        print("Exiting Pokemon Card Binder Manager.")
+        self.session_active = False
+
+    def run(self):
+        print("Welcome to Pokemon Card Binder Manager!")
+        while self.session_active:
+            self.display_menu()
+            try:
+                choice = int(input("Select option: "))
+                if choice == 1:
+                    try:
+                        pokedex_number = int(input("Enter Pokedex number: "))
+                        self.add_card(pokedex_number)
+                    except ValueError:
+                        print("Invalid input. Please enter a valid number.")
+                elif choice == 2:
+                    self.reset_binder()
+                elif choice == 3:
+                    self.view_placements()
+                elif choice == 4:
+                    self.exit_manager()
+                else:
+                    print("Invalid option. Please choose between 1 and 4.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+
 
 # Class: Overall Scoring System
 class OverallScore:
@@ -182,8 +215,8 @@ class GameSuite:
                     score = game.play()
                     self.scorer.update_score("TriviaPursuitQuiz", score)
                 elif choice == 4:
-                    binder = PokemonCardBinder()
-                    binder.manage()
+                    binder = PokemonCardBinder(self.scorer)
+                    binder.run()
                 elif choice == 5:
                     self.scorer.display_scores()
                 elif choice == 0:
